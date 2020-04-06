@@ -75,19 +75,18 @@ WSGI_APPLICATION = 'blogproject.wsgi.application'
 #         'NAME': os.path.join(BASE_DIR, 'database', 'db.sqlite3'),
 #     }
 # }
-
-DATABASES = {
+CACHES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'my_blog',
-        'USER':'root',
-        'PASSWORD':'123456a',
-        'HOST':'db',
-        'PORT':3306,
-        'OPTIONS': {'charset': 'utf8'},
-    }
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis:6379',  # redis（容器）
+        # 'LOCATION': '127.0.0.1:6379',
+        'OPTIONS': {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+            'SOCKET_TIMEOUT': 10,
+        },
+    },
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

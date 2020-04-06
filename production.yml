@@ -17,8 +17,16 @@ services:
       - static:/app/static
     env_file:
       - .envs/.production
-    ports:
-      - "8000:8000"
+#    ports:
+#      - "8000:8000"
+    expose:
+      - "8000"
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
     command: /start.sh
   db:
     image: daocloud.io/mysql:5.7
@@ -26,11 +34,19 @@ services:
       - MYSQL_DATABASE=my_blog # 数据库名称
       - MYSQL_ROOT_PASSWORD=123456a # 数据库密码
     volumes:
-      - "./mysql:/var/lib/mysql"
+      - ./compose/production/mysql/data:/var/lib/mysql # 挂载数据库数据
       - ./compose/production/mysql/conf/my.cnf:/etc/mysql/my.cnf
     ports:
       - "3306:3306"
     restart: always
+  redis:
+    image: daocloud.io/redis:3
+    command: redis-server
+    volumes:
+      - ./compose/production/redis:/data
+    ports:
+      - "6379:6379"
+    restart: always # always表容器运行发生错误时一直重启
   nginx:
     build:
       context: .
@@ -42,6 +58,12 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    links:
+      - hellodjango_blog_tutorial
+    depends_on:
+      - hellodjango_blog_tutorial
+    expose:
+      - "8000"
     restart: always
   elasticsearch:
     build:
@@ -63,3 +85,8 @@ services:
       nofile:
         soft: 65536
         hard: 65536
+    links:
+      - hellodjango_blog_tutorial
+    depends_on:
+      - hellodjango_blog_tutorial
+    restart: always
