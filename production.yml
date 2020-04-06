@@ -27,6 +27,7 @@ services:
       - MYSQL_ROOT_PASSWORD=123456a # 数据库密码
     volumes:
       - "./mysql:/var/lib/mysql"
+      - ./compose/production/mysql/conf/my.cnf:/etc/mysql/my.cnf
     ports:
       - "3306:3306"
     restart: always
