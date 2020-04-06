@@ -75,6 +75,19 @@ WSGI_APPLICATION = 'blogproject.wsgi.application'
 #         'NAME': os.path.join(BASE_DIR, 'database', 'db.sqlite3'),
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'my_blog',
+        'USER':'root',
+        'PASSWORD':'123456a',
+        'HOST':'db',
+        'PORT':3306,
+        'OPTIONS': {'charset': 'utf8'},
+    }
+}
+
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
