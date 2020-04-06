@@ -62,8 +62,8 @@ services:
       - hellodjango_blog_tutorial
     depends_on:
       - hellodjango_blog_tutorial
-    expose:
-      - "8000"
+#    expose:
+#      - "8000"
     restart: always
   elasticsearch:
     build:
