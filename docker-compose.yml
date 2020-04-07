@@ -17,8 +17,6 @@ services:
       - static:/app/static
     env_file:
       - .envs/.production
-#    ports:
-#      - "8000:8000"
     expose:
       - "8000"
     links:
