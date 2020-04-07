@@ -76,15 +76,26 @@ WSGI_APPLICATION = 'blogproject.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'my_blog',
+#         'USER':'root',
+#         'PASSWORD':'123456a',
+#         'HOST':'db',
+#         'PORT':3306,
+#         'OPTIONS': {'charset': 'utf8'},
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'my_blog',
-        'USER':'root',
-        'PASSWORD':'123456a',
-        'HOST':'db',
-        'PORT':3306,
-        'OPTIONS': {'charset': 'utf8'},
+        'NAME': os.environ.get('DJANGO_MYSQL_DATABASE'),
+        'USER': os.environ.get('DJANGO_MYSQL_USER'),
+        'PASSWORD': os.environ.get('DJANGO_MYSQL_PASSWORD'),
+        'HOST': os.environ.get('DJANGO_MYSQL_HOST'),
+        'PORT': int(os.environ.get('DJANGO_MYSQL_PORT')),
+        'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
 
