@@ -1,20 +1,19 @@
 version: '3'
 
 volumes:
-  static:
   esdata:
 
 services:
-  hellodjango_blog_tutorial:
+  blog:
     build:
       context: .
       dockerfile: compose/production/django/Dockerfile
-    image: hellodjango_blog_tutorial
-    container_name: hellodjango_blog_tutorial
+    image: blog
+    container_name: blog
     working_dir: /app
-    restart: always
+    command: /start.sh
     volumes:
-      - static:/app/static
+      - .:/app
     env_file:
       - .envs/.production
     expose:
@@ -25,9 +24,10 @@ services:
     depends_on:
       - db
       - redis
-    command: /start.sh
+    restart: always
   db:
     image: daocloud.io/mysql:5.7
+    container_name: db
     environment:
       - MYSQL_DATABASE=my_blog # 数据库名称
       - MYSQL_ROOT_PASSWORD=123456a # 数据库密码
@@ -39,36 +39,37 @@ services:
     restart: always
   redis:
     image: daocloud.io/redis:3
+    container_name: redis
     command: redis-server
     volumes:
       - ./compose/production/redis:/data
     ports:
       - "6379:6379"
-    restart: always # always表容器运行发生错误时一直重启
+    restart: always
   nginx:
     build:
       context: .
       dockerfile: compose/production/nginx/Dockerfile
-    image: hellodjango_blog_tutorial_nginx
-    container_name: hellodjango_blog_tutorial_nginx
+    image: nginx
+    container_name: nginx
     volumes:
-      - static:/apps/hellodjango_blog_tutorial/static
+      - ./static:/usr/share/nginx/html/static # 挂载静态文件
+      - ./media:/usr/share/nginx/html/media # 挂载上传文件
+      - ./compose/production/nginx/ssl:/usr/share/nginx/ssl # 挂载ssl证书目录
     ports:
       - "80:80"
       - "443:443"
     links:
-      - hellodjango_blog_tutorial
+      - blog
     depends_on:
-      - hellodjango_blog_tutorial
-#    expose:
-#      - "8000"
+      - blog
     restart: always
   elasticsearch:
     build:
       context: .
       dockerfile: ./compose/production/elasticsearch/Dockerfile
-    image: hellodjango_blog_tutorial_elasticsearch
-    container_name: hellodjango_blog_tutorial_elasticsearch
+    image: elasticsearch
+    container_name: elasticsearch
     volumes:
       - esdata:/usr/share/elasticsearch/data
     ports:
@@ -84,7 +85,7 @@ services:
         soft: 65536
         hard: 65536
     links:
-      - hellodjango_blog_tutorial
+      - blog
     depends_on:
-      - hellodjango_blog_tutorial
+      - blog
     restart: always
